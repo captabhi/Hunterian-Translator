@@ -2,12 +2,12 @@
  <div class="container">
   <div class="form-group">
     <label for="text-area"> Textarea</label>
-    <textarea class="form-control" id="text-area" rows="3"></textarea>
+    <textarea class="form-control" id="text-area" rows="3" v-model="input"></textarea>
   </div>
 
   <div class="form-group">
     <label for="text-area-translated"> Translated Textarea</label>
-    <textarea class="form-control" id="text-area-translated" rows="3"></textarea>
+    <textarea class="form-control" id="text-area-translated" rows="3" v-model="output"></textarea>
   </div>
  </div>
 </template>
@@ -19,6 +19,7 @@ export default {
   data() {
     return {
     
+    input:"raam",
     englishToHindiMap:{
       'a':'अ',
       'aa':'आ',
@@ -124,9 +125,74 @@ export default {
       'o':'ो',
       'au':'ौ'
     },
+    output:"",
 
 
     }
+  },
+  methods: {
+     iteratreAndConvert() {
+       
+
+       for(let i =0;i<this.input.length;i++)
+       {
+          
+          let convertedSubstr = this.generateSubstring(i);
+          i+=(convertedSubstr['substrLen']-2);
+          this.output+=convertedSubstr['returnedValue'];
+       }
+
+    },
+    isVowel(letter)
+    {
+        if(letter === 'a'||letter ==='o'||letter ==='e'||letter ==='i'||letter ==='u')
+        {
+          return 1;
+        }
+        else{
+          return 0;
+        }
+    },
+    generateSubstring(i){
+      var substr = "";
+      
+      for(let maxLength =4;maxLength>=1;maxLength--)
+      {
+          for(let x = i;x<maxLength;x++)
+          {
+            substr+=this.input[x];
+          }
+          let returnedValue = this.returnValidSubstring(substr);
+          if(returnedValue!="")
+          {
+            return {
+              'returnedValue':returnedValue,
+              'substrLen':maxLength,
+            }
+            ;
+          }
+          else{
+            substr = "";
+          }
+      }
+      
+    },
+    returnValidSubstring(substr)
+    {
+      if(this.englishToHindiMap[substr])
+      {
+          return this.englishToHindiMap[substr];
+      }
+      else if(this.englishToHindiMaatraMap[substr]){
+        return this.englishToHindiMaatraMap[substr];
+      }else {
+        return "";
+      }
+
+    }
+  },
+  mounted() {
+    this.iteratreAndConvert();
   }
   
 }
