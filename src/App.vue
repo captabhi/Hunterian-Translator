@@ -19,7 +19,7 @@ export default {
   data() {
     return {
     
-    input:"raam",
+    input:"ramu",
     englishToHindiMap:{
       'a':'अ',
       'aa':'आ',
