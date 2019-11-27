@@ -19,103 +19,68 @@ export default {
   data() {
     return {
     
-    input:"ramu",
+    input:"pragati",
+    previousletter:"",
+    previousLetterConsonentOrVowel:"",   // 1 for vowel, 0 for consonent
+    englishToHindiMapVowels:{
+        'i':'इ',
+        'ii':'ई',
+        'a':'अ',
+        'aa':'आ',
+        'u':'उ',
+        'uu':'ऊ',
+        'e':'ए',
+        'ai':'ऐ',
+        'o':'ओ',
+        'au':'औ',
+    },
     englishToHindiMap:{
-      'a':'अ',
-      'aa':'आ',
-      'i':'इ',
-      'ii':'ई',
-      'u':'उ',
-      'uu':'ऊ',
-      'e':'ए',
-      'ai':'ऐ',
-      'o':'ओ',
-      'au':'औ',
-      'k':'क्',
-      'ka':'क',
-      'kh':'ख्',
-      'kha':'ख',
-      'g':'ग्',
-      'ga':'ग',
-      'gh':'घ्',
-      'gha':'घ',
-      'ch':'च्',
-      'cha':'च',
-      'chh':'छ्',
-      'chha':'छ',
-      'j':'ज्',
-      'ja':'ज',
-      'jh':'झ्',
-      'jha':'झ',
-      't':'त्',
-      'ta':'त',
-      'tha':'थ',
-      'th':'थ्',
-      'T':'ट्',
-      'Ta':'ट',
-      'Th':'ठ्',
-      'Tha':'ठ',
-      'd':'द्',
-      'da':'द',
-      'D':'ड्',
-      'Da':'ड',
-      'Dh':'ढ्',
-      'Dha':'ढ',
-      'dh':'ध्',
-      'dha':'ध',
-      'n':'न्',
-      'na':'न',
-      'Ng':'ङ्',
-      'Nga':'ङ',
-      'N':'ण्',
-      'Na':'ण',
-      'Yn':'ञ्',
-      'Y':'य्',
-      'Ya':'य',
-      'Yna':'ञ',
-      'p':'प्',
-      'pa':'प',
-      'ph':'फ्',
-      'pha':'फ',
-      'b':'ब्',
-      'ba':'ब',
-      'bh':'भ्',
-      'bha':'भ',
-      'm':'म्',
-      'ma':'म',
-      'y':'य्',
-      'ya':'य',
-      'r':'र्',
-      'ra':'र',
+
+      'k':'क',
+      'kh':'ख',
+      'g':'ग',
+      'gh':'घ',
+      'ch':'च',
+      'chh':'छ',
+      'j':'ज',
+      'jh':'झ',
+      't':'त',
+      'th':'थ',
+      'T':'ट',
+      'Th':'ठ',
+      'd':'द',
+      'D':'ड',
+      'Dh':'ढ',
+      'dh':'ध',
+      'n':'न',
+      'Ng':'ङ',
+      'N':'ण',
+      'Y':'य',
+      'Yn':'ञ',
+      'p':'प',
+      'ph':'फ',
+      'b':'ब',
+      'bh':'भ',
+      'm':'म',
+      'y':'य',
+      'r':'र',
       'rr':'र्‍',
-      'l':'ल्',
-      'la':'ल',
-      'v':'व्',
-      'va':'व',
-      'sh':'श्',
-      'sha':'श',
-      's':'स्',
-      'sa':'स',
-      'shh':'ष्',
-      'shha':'ष',
-      'h':'ह्',
-      'ha':'ह',
-      'c':'क्',
-      'ca':'क',
-      'f':'फ्',
-      'fa':'फ',
-      'q':'क्',
-      'qa':'क',
-      'w':'व्',
-      'wa':'व',
-      'x':'ज्',
-      'xa':'ज',
-      'z':'ज्',
-      'za':'ज',
+      'l':'ल',
+      'v':'व',
+      'sh':'श',
+      's':'स',
+      'shh':'ष',
+      'h':'ह',
+      'c':'क',
+      'f':'फ',
+      'q':'क',
+      'w':'व',
+      'x':'ज',
+      'z':'ज',
       'O':'ॐ',
     },
     englishToHindiMaatraMap:{ 
-      'aa':'ा',
+      'a':'ा',
       'i':'ि',
       'ii':'ी',
       'u':'ु',
@@ -132,14 +97,14 @@ export default {
   },
   methods: {
      iteratreAndConvert() {
-       
 
-       for(let i =0;i<this.input.length;i++)
+       for(let i =0;i<this.input.length;)
        {
           
-          let convertedSubstr = this.generateSubstring(i);
-          i+=(convertedSubstr['substrLen']-2);
-          this.output+=convertedSubstr['returnedValue'];
+          i = this.generateSubstring(i);
+          console.log("After all i= "+i);
+
+
        }
 
     },
@@ -154,39 +119,94 @@ export default {
         }
     },
     generateSubstring(i){
-      var substr = "";
-      
-      for(let maxLength =4;maxLength>=1;maxLength--)
-      {
-          for(let x = i;x<maxLength;x++)
+      let substr = this.input[i];
+
+      if(this.isVowel(substr)){
+          // check if next character is also vowel
+          console.log("this is vovel"+substr);
+
+          if(this.isVowel(this.input[i+1])){
+              console.log("Next is also vovel"+this.input[i+1]);
+              substr+=this.input[i+1];
+              i+=2;
+          }
+          /* Now Vowel is two letter word
+             Check if some previous consonent is there
+          */
+          if(this.previousletter=="")
           {
-            substr+=this.input[x];
+              console.log("Previous letter empty");
+              this.previousletter+=this.englishToHindiMapVowels[substr];
           }
-          let returnedValue = this.returnValidSubstring(substr);
-          if(returnedValue!="")
+          else
           {
-            return {
-              'returnedValue':returnedValue,
-              'substrLen':maxLength,
-            }
-            ;
+              console.log("Previous letter present"+this.previousletter);
+              this.previousletter+=this.englishToHindiMaatraMap[substr];
+              console.log("After update"+this.previousletter);
           }
-          else{
-            substr = "";
+          this.output+=this.previousletter;
+          console.log("Finally updated output"+this.output);
+          i+=1;
+          return i;
+
+      }else{
+          console.log("Consonet");
+          let tempsubstr="";
+          for(let x=i;x<Math.min(i+3,this.input.length);x++){
+              tempsubstr+=this.input[x];
           }
+          console.log("Tempstr="+tempsubstr);
+          let validConsonet = this.returnValidConsonent(tempsubstr);
+          console.log("Consonet returnd Object");
+          console.log(validConsonet);
+          if(validConsonet['length']==3)
+          {
+              i+=3;
+          }
+          else if(validConsonet['length']==2)
+          {
+              i+=2;
+          }
+          else if(validConsonet['length']==1)
+          {
+              i+=1;
+          }
+          this.previousletter = validConsonet['validConsonent'];
+          if(i==this.input.length)
+          {
+              this.output+=this.previousletter;
+          }
+          console.log("finally previos letter in consonent"+this.previousletter);
+          return i;
       }
-      
     },
-    returnValidSubstring(substr)
+    returnValidConsonent(substr)
     {
+        console.log("Substr to match "+substr);
       if(this.englishToHindiMap[substr])
       {
-          return this.englishToHindiMap[substr];
+          console.log("Consonent of length "+substr.length);
+          return {
+              "validConsonent":this.englishToHindiMap[substr],
+              "length":substr.length,
+          }
       }
-      else if(this.englishToHindiMaatraMap[substr]){
-        return this.englishToHindiMaatraMap[substr];
-      }else {
-        return "";
+      else if(this.englishToHindiMap[substr.substring(0,substr.length-1)]){
+          console.log("Consonent of length "+substr.length);
+            return {
+                "validConsonent":this.englishToHindiMap[substr.substring(0,substr.length-1)],
+                "length":substr.length-1,
+            }
+      }
+      else if(this.englishToHindiMap[substr.substring(0,substr.length-2)]){
+          console.log("Consonent of length "+substr.length);
+              return {
+                  "validConsonent":this.englishToHindiMap[substr.substring(0,substr.length-2)],
+                  "length":substr.length-2,
+              }
+      }
+      else{
+          console.log("something unexpected happened");
       }
 
     }
