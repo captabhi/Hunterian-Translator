@@ -2,7 +2,7 @@
  <div class="container">
   <div class="form-group">
     <label for="text-area"> Textarea</label>
-    <textarea class="form-control" id="text-area" rows="3" v-model="input"></textarea>
+    <textarea class="form-control" id="text-area" rows="3" v-model="input" @keydown="iteratreAndConvert()" ></textarea>
   </div>
 
   <div class="form-group">
@@ -13,13 +13,14 @@
 </template>
 
 <script>
-
+    import _ from 'lodash'
 export default {
+
   name: 'app',
   data() {
     return {
     
-    input:"pragati",
+    input:"",
     previousletter:"",
     previousLetterConsonentOrVowel:"",   // 1 for vowel, 0 for consonent
     englishToHindiMapVowels:{
@@ -91,23 +92,36 @@ export default {
       'au':'ौ'
     },
     output:"",
-
+    lastTranslatedIndex:0,
 
     }
   },
   methods: {
-     iteratreAndConvert() {
+     iteratreAndConvert: _.debounce(function () {
+         let index = this.lastTranslatedIndex;
 
-       for(let i =0;i<this.input.length;)
-       {
-          
-          i = this.generateSubstring(i);
-          console.log("After all i= "+i);
+         for(let i =index;i<this.input.length;)
+         {
+
+             if(/\s/.test(this.input[i]))
+             {
+                 console.log("Empty");
+                 this.output+=" ";
+                 this.lastTranslatedIndex+=1;
+                 i+=1;
+                 this.previousletter = "";
+                 this.previousLetterConsonentOrVowel = "";
+             }else
+             {
+                 i = this.generateSubstring(i);
+                 console.log("After all i= "+i);
+                 this.lastTranslatedIndex = i;
+             }
 
 
-       }
+         }
 
-    },
+     },1000),
     isVowel(letter)
     {
         if(letter === 'a'||letter ==='o'||letter ==='e'||letter ==='i'||letter ==='u')
@@ -117,6 +131,10 @@ export default {
         else{
           return 0;
         }
+    },
+    feedInputToAlgorithm()
+    {
+
     },
     generateSubstring(i){
       let substr = this.input[i];
@@ -174,6 +192,9 @@ export default {
           this.previousletter = validConsonet['validConsonent'];
           if(i==this.input.length)
           {
+              this.output+=this.previousletter;
+          }
+          else if(!this.isVowel(this.input[i])){
               this.output+=this.previousletter;
           }
           console.log("finally previos letter in consonent"+this.previousletter);
